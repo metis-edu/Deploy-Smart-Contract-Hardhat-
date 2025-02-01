@@ -161,9 +161,9 @@ npm install --save-dev ethers
         },
     },
     etherscan: {
-    apiKey: {
+      apiKey: {
       metisSepolia: "any-non-empty-string", 
-  //Metis doesn't require an API key for verication. You can use any non-empty string as a placeholder.
+      //Metis doesn't require an API key for verication. You can use any non-empty string as a placeholder.
     },
     customChains: [
       {
@@ -174,11 +174,12 @@ npm install --save-dev ethers
           browserURL: "https://sepolia-explorer.metisdevops.link",
         },
       },
-    ],  
-  }
+    ],
+    }
     };
+    
    ```
-In the above example we used the Metis Sepolia test network and a `.js` file. [More info on using typescript with hardhat available here](https://hardhat.org/guides/typescript.html#typescript-support).
+   In the above example we used the Metis Sepolia test network and a `.js` file. [More info on using typescript with hardhat available here](https://hardhat.org/guides/typescript.html#typescript-support).
 
 ### Configure .env File for Private Key and RPC URL
 1. **Install dotenv: Install the dotenv package to handle environment variables**
