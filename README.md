@@ -1,4 +1,4 @@
-# Deploy First Smart Cotnract — Hardhat Project
+# Deploy First Smart Contract — Hardhat Project
 
 This repository demonstrates how to set up a Hardhat project and deploy the **VotingSystem** smart contract on Metis Sepolia/Andromeda. It also covers some common troubleshooting steps regarding ethers v5 vs. v6 usage in Hardhat.
 
@@ -124,17 +124,32 @@ main()
 ```
 ---
 
-## Step 5: Configure `hardhat.config.js`
+## Step 5: Install Remaining Dependencies
+
+If you haven’t installed the Hardhat toolbox or ethers.js yet, you can install them manually using the following commands:
+
+```bash
+npm install --save-dev @nomicfoundation/hardhat-toolbox
+npm install --save-dev @nomicfoundation/hardhat-verify
+npm install --save-dev @nomiclabs/hardhat-ethers
+npm install --save-dev ethers
+
+```
+---
+
+## Step 6: Configure `hardhat.config.js` for Metis deployment
 
 1. Open or create the `hardhat.config.js` file in your project’s root directory.
+
 2. Update the file to include the following content:
 
    ```javascript
     require("@nomicfoundation/hardhat-toolbox");
+    require("@nomicfoundation/hardhat-verify");
     require("dotenv").config();
 
     const PRIVATE_KEY = process.env.PRIVATE_KEY;
-    const METIS_SEPOLIA_RPC_URL = process.env.METIS_SEPOLIA_RPC_URL; // Replace this with the Metis Sepolia RPC URL
+    const METIS_SEPOLIA_RPC_URL = process.env.RPC_URL; // Replace this with the Metis Sepolia RPC URL
 
     module.exports = {
     solidity: "0.8.28",
@@ -145,8 +160,25 @@ main()
         chainId: 59902,
         },
     },
+    etherscan: {
+    apiKey: {
+      metisSepolia: "any-non-empty-string", 
+  //Metis doesn't require an API key for verication. You can use any non-empty string as a placeholder.
+    },
+    customChains: [
+      {
+        network: "metisSepolia",
+        chainId: 59902,
+        urls: {
+          apiURL: "https://sepolia-explorer-api.metisdevops.link/api",
+          browserURL: "https://sepolia-explorer.metisdevops.link",
+        },
+      },
+    ],  
+  }
     };
    ```
+In the above example we used the Metis Sepolia test network and a `.js` file. [More info on using typescript with hardhat available here](https://hardhat.org/guides/typescript.html#typescript-support).
 
 ### Configure .env File for Private Key and RPC URL
 1. **Install dotenv: Install the dotenv package to handle environment variables**
@@ -161,23 +193,11 @@ RPC_URL=https://sepolia.metisdevops.link
 ```
 Replace your_private_key with your wallet’s private key and RPC_URL with the RPC endpoint of your chosen network.
 
-2. **Update .gitignore: Ensure the .env file is ignored by Git by adding it to your .gitignore file:**
+3. **Update .gitignore: Ensure the .env file is ignored by Git by adding it to your .gitignore file:**
 ``` bash 
 .env
 ```
 
----
-
-## Step 6: Install Remaining Dependencies
-
-If you haven’t installed the Hardhat toolbox or ethers.js yet, you can install them manually using the following commands:
-
-```bash
-npm install --save-dev @nomicfoundation/hardhat-toolbox
-npm install --save-dev @nomiclabs/hardhat-ethers
-npm install --save-dev ethers
-
-```
 ---
 
 ## Step 7. Compile and Deploy
@@ -188,15 +208,19 @@ npx hardhat compile
 
 2. Deploy the VotingSystem contract:
 ```bash
-npx hardhat run scripts/deploy.js --network metis
+npx hardhat run scripts/deploy.js --network metisSepolia
 ```
 Replace metis with the actual network name from your hardhat.config.js. If deploying locally, you can omit --network ... to use the default local environment.
 
 ## Step 8. Verifying the Deployment
 • Local Network: By default, Hardhat uses a local network. You can see the contract deployed in your terminal logs, or connect via Hardhat’s console to interact with it.
 
-• Testnet/Mainnet: Once deployed, you should see a transaction hash. Check it on a block explorer (e.g., Metis explorer or Etherscan for Ethereum).
+• Testnet/Mainnet: Once deployed, you should see a transaction hash. You can verify your contract on Metis Blockchain using the following Hardhat command:
 
+```bash
+npx hardhat verify --network metisSepolia <DEPLOYED_CONTRACT_ADDRESS>
+```
+Replace  `<DEPLOYED_CONTRACT_ADDRESS>` with the actual address of your deployed contract, and check it on the Metis block explorer. Scroll down to see verified status. A green checkmark ✅ means the contract is verified.
 
 ## Step 9. Common Troubleshooting (Ethers v5 vs. v6)
 • Error: votingSystem.target is undefined
